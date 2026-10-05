@@ -5,26 +5,41 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, Menu, Search, Users, GraduationCap, UsersRound } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: route('dashboard'),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Cursos',
+        href: route('courses.index'),
+        icon: BookOpen,
+    },
+    {
+        title: 'Alumnos',
+        href: route('students.index'),
+        icon: GraduationCap,
+    },
+    {
+        title: 'Grupos',
+        href: route('groups.index'),
+        icon: UsersRound,
     },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
+        title: 'Repository',
+        href: 'https://github.com/EliasPuddini?tab=repositories',
         icon: Folder,
     },
     {
         title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits',
+        href: 'https://github.com/EliasPuddini/Noodle/tree/Develop/documentacion',
         icon: BookOpen,
     },
 ];
