@@ -13,28 +13,27 @@ class CourseController extends Controller
     {
         $courses = Course::all();
 
-        return inertia::render('courses/index', [
+        return Inertia::render('courses/index', [
             'courses' => $courses
         ]);
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return Inertia::render('courses/create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function store(Request $request){
+        $validated = $request->validate([
+            'code' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+        ]);
 
+        Course::create($validated);
+
+        return redirect()->route('courses.index');
+    }
     /**
      * Display the specified resource.
      */
