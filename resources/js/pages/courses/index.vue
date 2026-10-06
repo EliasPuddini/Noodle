@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,6 +17,12 @@ defineProps<{
         name: string;
     }>;
 }>();
+
+const deleteCourse = (id: number) => {
+    if (confirm('¿Estás seguro de que querés eliminar este curso?')) {
+        router.delete(route('courses.destroy', id));
+    }
+};
 </script>
 
 <template>
@@ -40,11 +46,17 @@ defineProps<{
                         <td class="py-2">{{ course.code }}</td>
                         <td class="py-2">{{ course.name }}</td>
                         <td class="py-2">
-                            <button class="mr-2 rounded bg-blue-500 px-2 py-1 text-white">
+                            <Link
+                                :href="route('courses.edit', course.id)"
+                                class="mr-2 rounded bg-blue-500 px-2 py-1 text-white"
+                            >
                                 Edit
-                            </button>
+                            </Link>
 
-                            <button class="rounded bg-red-500 px-2 py-1 text-white">
+                            <button
+                                @click="deleteCourse(course.id)"
+                                class="rounded bg-red-500 px-2 py-1 text-white"
+                            >
                                 Delete
                             </button>
                         </td>

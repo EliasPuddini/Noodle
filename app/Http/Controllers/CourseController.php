@@ -42,27 +42,33 @@ class CourseController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
-    }
+        $course = Course::findOrFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
+        return Inertia::render('courses/show', [
+            'course' => $course
+        ]);
+    }
+    
     public function update(Request $request, string $id)
     {
-        //
-    }
+        $validated = $request->validate([
+            'code' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
+        $course = Course::findOrFail($id);
+        $course->update($validated);
+
+        return redirect()->route('courses.index');
+    }
+    
     public function destroy(string $id)
     {
-        //
+        $course = Course::findOrFail($id);
+        $course->delete();
+
+        return redirect()->route('courses.index');
     }
 }
