@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -34,19 +35,24 @@ class CourseController extends Controller
 
         return redirect()->route('courses.index');
     }
-    /**
-     * Display the specified resource.
-     */
+    
+
     public function show(string $id)
     {
-        //
+        $courses = Course::findOrFail($id);
+        $students = Student::where('id', $id)->get();
+
+        return Inertia::render('courses/show', [
+            'course' => Course::findOrFail($id),
+            'students' => $students,
+        ]);
     }
 
     public function edit(string $id)
     {
         $course = Course::findOrFail($id);
 
-        return Inertia::render('courses/show', [
+        return Inertia::render('courses/edit', [
             'course' => $course
         ]);
     }
@@ -70,5 +76,18 @@ class CourseController extends Controller
         $course->delete();
 
         return redirect()->route('courses.index');
+    }
+
+    public function addStudent(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'code' => 'required|exists:students,code',
+        ]);
+
+        $course = Course::findOrFail($id);
+        $student = Student::where('code', $validated['code'])->first();
+        $course->students()->attach($student->id);
+
+        return redirect()->route('courses.show', $id);
     }
 }

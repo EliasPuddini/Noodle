@@ -59,6 +59,12 @@ const deleteCourse = (id: number) => {
                             >
                                 Delete
                             </button>
+                            <Link
+                                :href="route('courses.show', course.id)"
+                                class="ml-2 rounded bg-gray-500 px-2 py-1 text-white"
+                            >
+                                Info
+                            </Link>
                         </td>
                     </tr>
                 </tbody>

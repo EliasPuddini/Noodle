@@ -2,6 +2,9 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const modalAbierto = ref(false);
 
 const props = defineProps<{
     course: {
@@ -13,7 +16,7 @@ const props = defineProps<{
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Editar curso',
+        title: `${props.course.name} ${props.course.code}`,
         href: `/courses/${props.course.id}/edit`,
     },
 ];
@@ -23,61 +26,94 @@ const form = useForm({
     name: props.course.name,
 });
 
-const submit = () => {
-    form.put(route('courses.update', props.course.id));
-};
 </script>
 
 <template>
-    <Head title="Editar Curso" />
+    <Head title="{{ props.course.name }} {{ props.course.code }}" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
 
-            <form
-                @submit.prevent="submit"
-                class="flex flex-col gap-4 rounded-xl border border-sidebar-border/70 p-4 dark:border-sidebar-border"
-            >
-                <div class="flex flex-col gap-2">
-                    <label
-                        for="code"
-                        class="text-sm font-medium text-neutral-700 dark:text-neutral-300"
-                    >
-                        Code
-                    </label>
+            <H1>Students</H1>
 
-                    <input
-                        v-model="form.code"
-                        type="text"
-                        id="code"
-                        class="rounded border border-sidebar-border/70 bg-transparent px-3 py-2 text-sm text-neutral-900 dark:border-sidebar-border dark:text-neutral-100"
-                        required
-                    />
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
 
-                    <label
-                        for="name"
-                        class="text-sm font-medium text-neutral-700 dark:text-neutral-300"
-                    >
-                        Name
-                    </label>
+                <tbody>
+                    <tr v-for="student in students" :key="student.id">
+                        <td>{{ student.code }}</td>
+                        <td>{{ student.name }}</td>
+                    </tr>
+                </tbody>
 
-                    <input
-                        v-model="form.name"
-                        type="text"
-                        id="name"
-                        class="rounded border border-sidebar-border/70 bg-transparent px-3 py-2 text-sm text-neutral-900 dark:border-sidebar-border dark:text-neutral-100"
-                        required
-                    />
-                </div>
 
-                <button
-                    type="submit"
-                    :disabled="form.processing"
-                    class="self-start rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:opacity-50"
+            </table>
+
+            <Button
+                type="button"
+                @click="modalAbierto = true"
+                class="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-3xl font-light text-white shadow-lg transition hover:bg-green-600 hover:shadow-xl"
                 >
-                    Save Changes
-                </button>
-            </form>
+                +
+            </Button>
+
+            <!--Modal para añadir alumnos-->
+
+            <div
+                v-if="modalAbierto"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                @click.self="modalAbierto = false"
+            >
+                <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-neutral-900">
+                    <div class="mb-4 flex items-center justify-between">
+                        <h3 class="text-xl font-semibold">Añadir Alumnos</h3>
+
+                        <button
+                            type="button"
+                            @click="modalAbierto = false"
+                            class="rounded px-3 py-1 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                        >
+                            Cerrar
+                        </button>
+                    </div>
+
+                    <form
+                        @submit.prevent="form.post(route('courses.addStudent', props.course.id), {
+                            onSuccess: () => {
+                                modalAbierto = false;
+                                form.reset();
+                            }
+                        })"
+                        class="flex flex-col gap-4"
+                    >
+                        <div class="flex flex-col gap-2">
+                            <label for="code">Código del alumno</label>
+
+                            <input
+                                id="code"
+                                v-model="form.code"
+                                type="text"
+                                name="code"
+                                required
+                                class="rounded border border-neutral-300 bg-transparent px-3 py-2 dark:border-neutral-700"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="self-start rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:opacity-50"
+                        >
+                            {{ form.processing ? 'Agregando...' : 'Agregar alumno' }}
+                        </button>
+                    </form>
+                </div>
+            </div>
 
         </div>
     </AppLayout>
