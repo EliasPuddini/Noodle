@@ -5,7 +5,7 @@ import { Head, Link, router } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Cursos',
+        title: 'Courses',
         href: '/courses',
     },
 ];

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Models\Student;
 
 class StudentController extends Controller
 {
@@ -11,23 +13,30 @@ class StudentController extends Controller
      */
     public function index()
     {
-        //
+        $students = Student::all();
+        return Inertia::render('students/index', [
+            'students' => $students
+        ]); 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
-        //
+        return Inertia::render('students/create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'code' => 'required|unique:students,code',
+            'name' => 'required',
+            'email' => 'required|email|unique:students,email',
+        ]);
+
+        Student::create($request->all());
+
+        return redirect()->route('students.index')->with('success', 'Student created successfully.');
     }
 
     /**
